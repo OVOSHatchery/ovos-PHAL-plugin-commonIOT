@@ -5,10 +5,10 @@ from ovos_plugin_manager.phal import PHALPlugin
 from ovos_utils.gui import GUIInterface
 from ovos_utils.log import LOG
 
-from ovos_PHAL_plugin_commonIOT.devices import Bulb, RGBBulb, RGBWBulb, GenericDevice
+from ovos_plugin_manager.templates.iot import IOTDevicePlugin, IOTScannerPlugin, Bulb, RGBBulb, RGBWBulb
 
 
-class commonIOTPluginValidator:
+class CommonIOTPluginValidator:
     @staticmethod
     def validate(config=None):
         """ this method is called before loading the plugin.
@@ -17,8 +17,8 @@ class commonIOTPluginValidator:
         return True
 
 
-class commonIOTPlugin(PHALPlugin):
-    validator = commonIOTPluginValidator
+class CommonIOTPlugin(PHALPlugin):
+    validator = CommonIOTPluginValidator
 
     def __init__(self, bus=None, config=None):
         """ Initialize the plugin
@@ -32,7 +32,7 @@ class commonIOTPlugin(PHALPlugin):
         self.gui = GUIInterface(bus=self.bus, skill_id=self.name)
 
         self.device_types = {
-            "generic": GenericDevice,
+            "generic": IOTDevicePlugin,
             "bulb": Bulb,
             "bulbRGB": RGBBulb,
             "bulbRGBW": RGBWBulb
