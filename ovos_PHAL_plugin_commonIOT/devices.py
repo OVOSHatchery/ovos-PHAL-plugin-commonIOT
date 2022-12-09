@@ -5,8 +5,7 @@ from threading import Thread
 from time import sleep
 
 from ovos_utils.json_helper import merge_dict
-
-from ovos_PHAL_plugin_commonIOT.colors import Color
+from ovos_utils.colors import Color
 
 """base classes for eveyr supported device type"""
 
@@ -85,7 +84,7 @@ class Bulb(GenericDevice):
 
     def change_color(self, color="white"):
         if isinstance(color, Color):
-            if color.rgb == (0, 0, 0):
+            if color.rgb255 == (0, 0, 0):
                 self.turn_off()
             else:
                 if self.is_off:
@@ -238,13 +237,13 @@ class RGBBulb(Bulb):
         self.change_color(Color.from_hsv(h, s, v))
 
     def change_color_rgb(self, r, g, b):
-        self.change_color(Color(r, g, b))
+        self.change_color(Color.from_rgb(r, g, b))
 
     def cross_fade(self, color1, color2, steps=100):
         if isinstance(color1, Color):
-            color1 = color1.rgb
+            color1 = color1.rgb255
         if isinstance(color2, Color):
-            color2 = color2.rgb
+            color2 = color2.rgb255
         r1, g1, b1 = color1
         r2, g2, b2 = color2
         for i in range(1, steps + 1):
@@ -263,100 +262,52 @@ class RGBBulb(Bulb):
         def cycle_color():
 
             class Red(Color):
-                def __init__(self):
-                    super().__init__(255, 0, 0)
-
-                @property
-                def name(self):
-                    return "red"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(255, 0, 0)
 
             class Orange(Color):
-                def __init__(self):
-                    super().__init__(255, 125, 0)
-
-                @property
-                def name(self):
-                    return "orange"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(255, 125, 0)
 
             class Yellow(Color):
-                def __init__(self):
-                    super().__init__(255, 255, 0)
-
-                @property
-                def name(self):
-                    return "yellow"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(255, 255, 0)
 
             class SpringGreen(Color):
-                def __init__(self):
-                    super().__init__(125, 255, 0)
-
-                @property
-                def name(self):
-                    return "spring green"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(125, 255, 0)
 
             class Green(Color):
-                def __init__(self):
-                    super().__init__(0, 255, 0)
-
-                @property
-                def name(self):
-                    return "green"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(0, 255, 0)
 
             class Turquoise(Color):
-                def __init__(self):
-                    super().__init__(0, 255, 125)
-
-                @property
-                def name(self):
-                    return "turquoise"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(0, 255, 125)
 
             class Cyan(Color):
-                def __init__(self):
-                    super().__init__(0, 255, 255)
-
-                @property
-                def name(self):
-                    return "cyan"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(0, 255, 255)
 
             class Ocean(Color):
-                def __init__(self):
-                    super().__init__(0, 125, 255)
-
-                @property
-                def name(self):
-                    return "ocean"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(0, 125, 255)
 
             class Blue(Color):
-                def __init__(self):
-                    super().__init__(0, 0, 255)
-
-                @property
-                def name(self):
-                    return "blue"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(0, 0, 255)
 
             class Violet(Color):
-                def __init__(self):
-                    super().__init__(125, 0, 255)
-
-                @property
-                def name(self):
-                    return "violet"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(125, 0, 255)
 
             class Magenta(Color):
-                def __init__(self):
-                    super().__init__(255, 0, 255)
-
-                @property
-                def name(self):
-                    return "magenta"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(255, 0, 255)
 
             class Raspberry(Color):
-                def __init__(self):
-                    super().__init__(255, 0, 125)
-
-                @property
-                def name(self):
-                    return "raspberry"
+                def __new__(cls, *args, **kwargs):
+                    return Color.from_rgb(255, 0, 125)
 
             colorwheel = [Red(), Orange(), Yellow(), SpringGreen(),
                           Green(), Turquoise(), Cyan(), Ocean(),
@@ -402,7 +353,7 @@ class RGBBulb(Bulb):
         self._timer.start()
 
     def random_color(self):
-        color = Color(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
+        color = Color.from_rgb(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
         self.change_color(color)
 
 
