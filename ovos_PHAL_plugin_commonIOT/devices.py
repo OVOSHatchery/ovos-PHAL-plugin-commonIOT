@@ -1,15 +1,19 @@
-from ovos_PHAL_plugin_commonIOT.colors import Color
-from ovos_utils.json_helper import merge_dict
-import time
 import itertools
+import random
+import time
 from threading import Thread
 from time import sleep
-import random
+
+from ovos_utils.json_helper import merge_dict
+
+from ovos_PHAL_plugin_commonIOT.colors import Color
+
 """base classes for eveyr supported device type"""
 
 
 class GenericDevice:
-    def __init__(self, host, name=None, raw_data=None):
+    def __init__(self, device_id, host=None, name=None, raw_data=None):
+        self._device_id = device_id
         self._name = name or self.__class__.__name__
         self._host = host
         self._raw = [raw_data] or [{"name": name, "host": host}]
@@ -76,8 +80,8 @@ class GenericDevice:
 
 
 class Bulb(GenericDevice):
-    def __init__(self, host, name="generic_bulb", raw_data=None):
-        super().__init__(host, name, raw_data)
+    def __init__(self, device_id, host=None, name="generic_bulb", raw_data=None):
+        super().__init__(device_id, host, name, raw_data)
 
     def change_color(self, color="white"):
         if isinstance(color, Color):
@@ -208,8 +212,8 @@ class Bulb(GenericDevice):
 
 
 class RGBBulb(Bulb):
-    def __init__(self, host, name="generic_rgb_bulb", raw_data=None):
-        super().__init__(host, name, raw_data)
+    def __init__(self, device_id, host=None, name="generic_rgb_bulb", raw_data=None):
+        super().__init__(device_id, host, name, raw_data)
 
     def reset(self):
         super().reset()
@@ -403,8 +407,8 @@ class RGBBulb(Bulb):
 
 
 class RGBWBulb(RGBBulb):
-    def __init__(self, host, name="generic_rgbw_bulb", raw_data=None):
-        super().__init__(host, name, raw_data)
+    def __init__(self, device_id, host=None, name="generic_rgbw_bulb", raw_data=None):
+        super().__init__(device_id, host, name, raw_data)
 
     @property
     def as_dict(self):

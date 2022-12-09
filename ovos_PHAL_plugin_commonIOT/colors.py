@@ -1,10 +1,8 @@
-from webcolors import name_to_hex, name_to_rgb, name_to_rgb_percent, \
-    rgb_percent_to_hex, \
-    rgb_percent_to_name, rgb_percent_to_rgb, rgb_to_hex, rgb_to_name, \
-    rgb_to_rgb_percent, \
-    hex_to_name, hex_to_rgb, hex_to_rgb_percent
 from colorsys import rgb_to_yiq, yiq_to_rgb, rgb_to_hls, hls_to_rgb, \
     rgb_to_hsv, hsv_to_rgb
+
+from webcolors import name_to_rgb, rgb_to_hex, rgb_to_name, \
+    hex_to_name, hex_to_rgb
 
 
 def hsv_to_name(h, s, v):
