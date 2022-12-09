@@ -27,8 +27,7 @@ class commonIOTPlugin(PHALPlugin):
                 config (dict): The plugin configuration
         """
         super().__init__(bus=bus, name="ovos-PHAL-plugin-iot", config=config)
-        self.connector = None
-        self.registered_devices = []
+        self.registered_devices = {}  # device_id: device object
         self.bus = bus
         self.gui = GUIInterface(bus=self.bus, skill_id=self.name)
 
@@ -69,7 +68,7 @@ class commonIOTPlugin(PHALPlugin):
     def build_display_dashboard_model(self):
         """ Build the dashboard model """
         device_type_model = []
-        for device in self.registered_devices:
+        for dev_id, device in self.registered_devices.items():
             device_type = device.device_type
             if device_type not in device_type_model:
                 device_type_model.append(device_type)
@@ -77,10 +76,11 @@ class commonIOTPlugin(PHALPlugin):
         display_list_model = []
         for device_type in device_type_model:
             device_type_list_model = []
-            for device in self.registered_devices:
-                if device.device_type == device_type:
-                    device_type_list_model.append(
-                        device.get_device_display_model())
+            for dev_id, device in self.registered_devices.items():
+                clazz = self.device_types.get(device_type)
+                if isinstance(device, clazz):
+                    model = {}  # TODO - device.get_device_display_model()
+                    device_type_list_model.append(model)
             device_human_readable_type = device_type.replace("_", " ").title()
             display_list_model.append({
                 "type": device_type,
@@ -98,10 +98,11 @@ class commonIOTPlugin(PHALPlugin):
             dict: The device model
         """
         device_type_list_model = []
-        for device in self.registered_devices:
-            if device.device_type == device_type:
-                device_type_list_model.append(
-                    device.get_device_display_model())
+        for dev_id, device in self.registered_devices.items():
+            clazz = self.device_types.get(device_type)
+            if isinstance(device, clazz):
+                model = {}  # TODO - device.get_device_display_model()
+                device_type_list_model.append(model)
         return device_type_list_model
 
     # BUS API HANDLERS
@@ -115,8 +116,8 @@ class commonIOTPlugin(PHALPlugin):
     def handle_get_device(self, message):
         device_id = message.data.get("device_id", None)
         if device_id is not None:
-            for device in self.registered_devices:
-                if device.device_id == device_id:
+            for dev_id, device in self.registered_devices.items():
+                if dev_id == device_id:
                     self.bus.emit(message.response(data=device))
                     return
         self.bus.emit(message.response(data=None))
@@ -128,8 +129,8 @@ class commonIOTPlugin(PHALPlugin):
         """
         device_id = message.data.get("device_id", None)
         if device_id is not None:
-            for device in self.registered_devices:
-                if device.device_id == device_id:
+            for dev_id, device in self.registered_devices.items():
+                if dev_id == device_id:
                     response = device.turn_on()
                     self.bus.emit(message.response(data=response))
                     return
@@ -143,8 +144,8 @@ class commonIOTPlugin(PHALPlugin):
         """
         device_id = message.data.get("device_id", None)
         if device_id is not None:
-            for device in self.registered_devices:
-                if device.device_id == device_id:
+            for dev_id, device in self.registered_devices.items():
+                if dev_id == device_id:
                     response = device.turn_off()
                     self.bus.emit(message.response(data=response))
                     return
@@ -160,8 +161,8 @@ class commonIOTPlugin(PHALPlugin):
         function_name = message.data.get("function_name", None)
         function_args = message.data.get("function_args", None)
         if device_id is not None and function_name is not None:
-            for device in self.registered_devices:
-                if device.device_id == device_id:
+            for dev_id, device in self.registered_devices.items():
+                if dev_id == device_id:
                     if function_args is not None:
                         response = device.call_function(
                             function_name, function_args)
@@ -179,8 +180,8 @@ class commonIOTPlugin(PHALPlugin):
         """
         device_id = message.data.get("device_id", None)
         if device_id is not None:
-            for device in self.registered_devices:
-                if device.device_id == device_id:
+            for dev_id, device in self.registered_devices.items():
+                if dev_id == device_id:
                     self.bus.emit(message.response(
                         data=device.get_device_display_model()))
                     return
