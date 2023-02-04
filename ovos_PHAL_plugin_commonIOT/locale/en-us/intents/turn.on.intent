@@ -1,1 +1,3 @@
 (turn|switch|put) on (|the) {device}
+(power (up|on)) (|the) {device}
+(turn|switch|put) (|the) {device} (|power) on

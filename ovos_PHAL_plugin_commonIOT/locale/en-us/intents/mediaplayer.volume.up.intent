@@ -1,0 +1,6 @@
+(turn|switch|move) up (|the) (volume|sound) on (|the) {device}
+(turn|switch|move) (|the) (volume|sound) up on (|the) {device}
+(turn|switch|move) up (|the) {device} (volume|sound)
+(|the) {device} (volume|sound) is (|too) (low|soft)
+I can't hear the {device}
+increase (|the) (volume|sound) on (|the) {device}
