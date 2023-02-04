@@ -1,0 +1,5 @@
+(turn|switch|move) down (|the) (volume|sound) on (|the) {device}
+(turn|switch|move) (|the) (volume|sound) down on (|the) {device}
+(turn|switch|move) down (|the) {device} (volume|sound)
+(|the) {device} (|(volume|sound)) is (|too) (high|loud)
+decrease (|the) (volume|sound) on (|the) {device}
