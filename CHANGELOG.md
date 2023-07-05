@@ -1,5 +1,9 @@
 # Changelog
 
+## [V0.0.0a1](https://github.com/OpenVoiceOS/ovos-PHAL-plugin-commonIOT/tree/V0.0.0a1) (2023-07-05)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-PHAL-plugin-commonIOT/compare/V0.0.0a5...V0.0.0a1)
+
 ## [V0.0.0a5](https://github.com/OpenVoiceOS/ovos-PHAL-plugin-commonIOT/tree/V0.0.0a5) (2023-02-04)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-PHAL-plugin-commonIOT/compare/V0.0.0a4...V0.0.0a5)
