@@ -63,18 +63,6 @@ class Bulb(Switch):
     def set_high_brightness(self):
         self.change_brightness(100)
 
-    @property
-    def as_dict(self):
-        return {
-            "host": self.host,
-            "name": self.name,
-            "brightness": self.brightness_255,
-            "color": self.color.as_dict,
-            "device_type": "bulb",
-            "state": self.is_on,
-            "raw": self.raw_data
-        }
-
     def reset(self):
         self.mode = ""
         self._timer = None
@@ -307,14 +295,3 @@ class RGBWBulb(RGBBulb):
                  area=None, device_type=IOTDeviceType.RGBW_BULB, raw_data=None):
         super().__init__(device_id, host, name, area, device_type, raw_data)
 
-    @property
-    def as_dict(self):
-        return {
-            "host": self.host,
-            "name": self.name,
-            "device_type": "rgbw bulb",
-            "brightness": self.brightness_255,
-            "color": self.color.rgb255,
-            "state": self.is_on,
-            "raw": self.raw_data
-        }
