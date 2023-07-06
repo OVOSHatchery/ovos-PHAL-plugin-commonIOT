@@ -314,7 +314,7 @@ class RGBWBulb(RGBBulb):
             "name": self.name,
             "device_type": "rgbw bulb",
             "brightness": self.brightness_255,
-            "color": self.color.as_dict,
+            "color": self.color.rgb255,
             "state": self.is_on,
             "raw": self.raw_data
         }

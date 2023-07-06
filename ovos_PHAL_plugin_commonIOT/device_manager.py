@@ -11,6 +11,8 @@ class CommonIOTDeviceManager:
                 bus (MycroftBusClient): The Mycroft bus client
         """
         self.scanners = {}
+        self.devices = {}
+        self.mappings = {}
         self.bus = bus
 
         # BUS API
@@ -33,11 +35,30 @@ class CommonIOTDeviceManager:
         # self.bus.on("ovos.iot.device.mute", self.handle_mute)
         # self.bus.on("ovos.iot.device.unmute", self.handle_unmute)
 
+    def disambiguate_new_device(self, device: IOTAbstractDevice):
+        # check if device with same ip exists
+        for dev_id, device2 in self.devices.items():
+            if device.host == device2.host:
+                print("duplicate device found, same host", device, device2)
+                if device.device_id not in self.mappings:
+                    self.mappings[device.device_id] = []
+                if device2.device_id not in self.mappings[device.device_id]:
+                    self.mappings[device.device_id].append(device2.device_id)
+
+                if device2.device_id not in self.mappings:
+                    self.mappings[device2.device_id] = []
+                if device.device_id not in self.mappings[device2.device_id]:
+                    self.mappings[device2.device_id].append(device.device_id)
+
     def on_new_device(self, device: IOTAbstractDevice):
+        self.disambiguate_new_device(device)
         pprint(device.as_dict)
+        self.devices[device.device_id] = device
 
     def on_device_lost(self, device: IOTAbstractDevice):
         pprint(device.as_dict)
+        if device.device_id in self.devices:
+            self.devices.pop(device.device_id)
 
     def load_scanners(self):
         for plugin, scanner_clazz in find_iot_plugins().items():
@@ -73,3 +94,19 @@ if __name__ == "__main__":
     #  'host': '192.168.1.1',
     #  'name': 'unknown',
     #  'state': True}
+    # found device: Fairphone 4 5G:E8:78:29:C2:E0:1F
+    # {'area': None,
+    #  'device_class': 'BluetoothDevice',
+    #  'device_id': 'Fairphone 4 5G:E8:78:29:C2:E0:1F',
+    #  'device_type': <IOTDeviceType.SENSOR: 'sensor'>,
+    #  'host': 'E8:78:29:C2:E0:1F',
+    #  'name': 'Fairphone 4 5G',
+    #  'state': True}
+    # lost device: Fairphone 4 5G:E8:78:29:C2:E0:1F
+    # {'area': None,
+    #  'device_class': 'BluetoothDevice',
+    #  'device_id': 'Fairphone 4 5G:E8:78:29:C2:E0:1F',
+    #  'device_type': <IOTDeviceType.SENSOR: 'sensor'>,
+    #  'host': 'E8:78:29:C2:E0:1F',
+    #  'name': 'Fairphone 4 5G',
+    #  'state': False}
