@@ -1,0 +1,1 @@
+from ovos_PHAL_plugin_commonIOT.service import CommonIOTService

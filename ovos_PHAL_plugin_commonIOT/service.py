@@ -15,7 +15,7 @@ class CommonIOTPluginValidator:
         return True
 
 
-class CommonIOTPlugin(PHALPlugin):
+class CommonIOTService(PHALPlugin):
     validator = CommonIOTPluginValidator
 
     def __init__(self, bus=None, config=None):

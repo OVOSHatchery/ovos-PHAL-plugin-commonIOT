@@ -50,7 +50,7 @@ def required(requirements_file):
                 if pkg.strip() and not pkg.startswith("#")]
 
 
-PLUGIN_ENTRY_POINT = 'ovos-PHAL-plugin-commonIOT=ovos_PHAL_plugin_commonIOT.plugin:CommonIOTPlugin'
+PLUGIN_ENTRY_POINT = 'ovos-PHAL-plugin-commonIOT=ovos_PHAL_plugin_commonIOT.service:CommonIOTService'
 setup(
     name='ovos-PHAL-plugin-commonIOT',
     version=get_version(),
