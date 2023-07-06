@@ -28,6 +28,7 @@ class CommonIOTPlugin(PHALPlugin):
         self.bus = bus
         self.vui = IOTVoiceInterface(self.bus)
         self.device_manager = CommonIOTDeviceManager(self.bus)
+        self.device_manager.load_scanners()
 
     @classproperty
     def runtime_requirements(self):
