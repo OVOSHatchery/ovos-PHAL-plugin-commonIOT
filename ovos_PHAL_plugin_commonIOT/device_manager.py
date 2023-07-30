@@ -34,6 +34,104 @@ class CommonIOTDeviceManager:
         # self.bus.on("ovos.iot.device.volume.down", self.handle_volume_down)
         # self.bus.on("ovos.iot.device.mute", self.handle_mute)
         # self.bus.on("ovos.iot.device.unmute", self.handle_unmute)
+        
+        # iot lights actions
+        self.bus.on("ovos.iot.device.get.brightness", self.handle_get_brightness)
+        self.bus.on("ovos.iot.device.set.brightness", self.handle_set_brightness)
+        self.bus.on("ovos.iot.device.decrease.brightness", self.handle_decrease_brightness)
+        self.bus.on("ovos.iot.device.increase.brightness", self.handle_increase_brightness)
+        self.bus.on("ovos.iot.device.get.color", self.handle_get_color)
+        self.bus.on("ovos.iot.device.set.color", self.handle_set_color)
+        
+    # light handlers 
+    def handle_get_brightness(self, message):
+        device = self.get_device(message.data.get("device"))
+        if not device:
+            self.speak_dialog("device.not.found.dialog", data="device": message.data.get("device").get("name"))
+        else:
+            brightness = device.brightness
+            self.speak_dialog("light.current.brightness.dialog", data={"device": device.name,
+                                                                       "brightness": brightness})
+            return brightness
+        return False
+    
+    def handle_set_brightness(self, message):
+        device = self.get_device(message.data.get("device"))
+        if not device:
+            self.speak_dialog("device.not.found.dialog", data="device": message.data.get("device").get("name"))
+        else:
+            try:
+                brightness = message.data.get("brightness")
+                device.set_brightness(brightness)
+                self.speak_dialog("light.set.brightness.dialog", data={"device": device.name,
+                                                                       "brightness": brightness})
+                return device.brightness
+            
+            except Exception as e:
+                LOG.error(e)
+                self.speak_dialog("light.set.brightness.error.dialog", data={"device": device.name})
+        return False
+    
+    def handle_decrease_brightness(self, message):
+        device = self.get_device(message.data.get("device"))
+        if not device:
+            self.speak_dialog("device.not.found.dialog", data="device": message.data.get("device").get("name"))
+        else:
+            device_brightness = device.brightness
+            try:
+                device.set_brightness(device_brightness - int(message.data.get("amount")))
+                self.speak_dialog("light.set.brightness.dialog", data={"device": device.name,
+                                                                       "brightness": device.brightness})
+                return device.brightness
+            except Exception as e:
+                LOG.error(e)
+                self.speak_dialog("light.set.brightness.error.dialog", data={"device": device.name})
+        return False
+    
+    def handle_increase_brightness(self, message):
+        device = self.get_device(message.data.get("device"))
+        if not device:
+            self.speak_dialog("device.not.found.dialog", data="device": message.data.get("device").get("name"))
+        else:
+            device_brightness = device.brightness
+            try:
+                device.set_brightness(device_brightness + int(message.data.get("amount")))
+                self.speak_dialog("light.set.brightness.dialog", data={"device": device.name,
+                                                                       "brightness": device.brightness})
+                return device.brightness
+            except Exception as e:
+                LOG.error(e)
+                self.speak_dialog("light.set.brightness.error.dialog", data={"device": device.name})
+        return False
+    
+    def handle_get_color(self, message):
+        device = self.get_device(message.data.get("device"))
+        if not device:
+            self.speak_dialog("device.not.found.dialog", data={"device": message.data.get("device").get("name")})
+        else:
+            color = device.color
+            try:
+                self.speak_dialog("light.current.color.dialog", data={"device": device.name, 
+                                                                      "color": color})
+                return color
+            except Exception as e:
+                LOG.error(e)
+                self.speak_dialog("light.current.color.error.dialog", data={"device"})
+        return False
+    
+    def handle_set_color(self, message):
+        device = self.get_device(message.data.get("device"))
+        if not device:
+            self.speak_dialog("device.not.found.dialog", data={"device": message.data.get("device").get("name")})
+        else:
+            color = message.data.get("color")
+            try:
+                device.change_color(color)
+                self.speak_dialog("light.set.color.dialog", data={"device": device.name,
+                                                                  "color": color})
+                return device.color
+        return False
+        
 
     def disambiguate_new_device(self, device: IOTAbstractDevice):
         # check if device with same ip exists
@@ -73,6 +171,8 @@ class CommonIOTDeviceManager:
             scanner.start()
             self.scanners[plugin] = scanner
 
+    def get_device(self, device):
+        return self.devices.get(device.device_id, None)
 
 if __name__ == "__main__":
     from ovos_utils.messagebus import FakeBus

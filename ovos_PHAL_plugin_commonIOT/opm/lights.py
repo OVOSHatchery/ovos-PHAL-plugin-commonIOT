@@ -10,7 +10,7 @@ from ovos_PHAL_plugin_commonIOT.opm.base import IOTCapabilties, Switch, IOTDevic
 
 
 class Bulb(Switch):
-    capabilities = Plug.capabilities + [
+    capabilities = Switch.capabilities + [
         IOTCapabilties.REPORT_BRIGHTNESS,
         IOTCapabilties.CHANGE_BRIGHTNESS,
         IOTCapabilties.BLINK_LIGHT,
