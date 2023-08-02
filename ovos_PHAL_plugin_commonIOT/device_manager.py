@@ -47,60 +47,56 @@ class CommonIOTDeviceManager:
     def handle_get_brightness(self, message):
         device = self.search_for_device(message.data.get("device"))
         if device:
-            return device.brightness
-        return None
+            msg = message.response(data={"brightness": device.brightness})
+            self.bus.emit(msg)
 
     def handle_set_brightness(self, message):
         device = self.search_for_device(message.data.get("device"))
         if device:
             try:
-                device.set_brightness(message.data.get("brightness"))
-                return device.brightness
+                msg = message.response(data={"brightness": device.change_brightness(message.data.get("brightness"))})
             except Exception as e:
                 LOG.error(e)
-                return e
-        return False
+                msg = message.response(data={"brightness": e})
+        self.bus.emit(msg)
 
     def handle_decrease_brightness(self, message):
         device = self.search_for_device(message.data.get("device"))
         if device:
             try:
                 amount = int(message.data.get("amount"))
-                device.set_brightness(device.brightness - amount)
-                return device.brightness
+                msg = message.response(data={"brightness": device.change_brightness(device.brightness - amount)})
             except Exception as e:
                 LOG.error(e)
-                return e
-        return False
+                msg = message.response(data={"brightness": e})
+        self.bus.emit(msg)
 
     def handle_increase_brightness(self, message):
         device = self.search_for_device(message.data.get("device"))
         if device:
             try:
                 amount = int(message.data.get("amount"))
-                device.set_brightness(device.brightness + amount)
-                return device.brightness
+                msg = message.response(data={"brightness": device.change_brightness(device.brightness + amount)})
             except Exception as e:
                 LOG.error(e)
-                return e
-        return False
+                msg = message.response(data={"brightness": e})
+        self.bus.emit(msg)
 
     def handle_get_color(self, message):
         device = self.search_for_device(message.data.get("device"))
         if device:
-            return device.color
-        return None
+            msg = message.response(data={"color": device.color})
+        self.bus.emit(msg)
 
     def handle_set_color(self, message):
         device = self.search_for_device(message.data.get("device"))
         if device:
             try:
-                device.change_color(message.data.get("color"))
-                return device.color
+                msg = message.response(data={"color": device.change_color(message.data.get("color"))})
             except Exception as e:
                 LOG.error(e)
-                return e
-        return None
+                msg = message.response(data={"color": e})
+        self.bus.emit(msg)
 
     def search_for_device(self, device):
         for d_id, d in self devices.items():
