@@ -35,6 +35,75 @@ class CommonIOTDeviceManager:
         # self.bus.on("ovos.iot.device.mute", self.handle_mute)
         # self.bus.on("ovos.iot.device.unmute", self.handle_unmute)
 
+        # iot lights actions
+        self.bus.on("ovos.iot.device.get.brightness", self.handle_get_brightness)
+        self.bus.on("ovos.iot.device.set.brightness", self.handle_set_brightness)
+        self.bus.on("ovos.iot.device.decrease.brightness", self.handle_decrease_brightness)
+        self.bus.on("ovos.iot.device.increase.brightness", self.handle_increase_brightness)
+        self.bus.on("ovos.iot.device.get.color", self.handle_get_color)
+        self.bus.on("ovos.iot.device.set.color", self.handle_set_color)
+
+    # light handlers
+    def handle_get_brightness(self, message):
+        device = self.search_for_device(message.data.get("device"))
+        if device:
+            msg = message.response(data={"brightness": device.brightness})
+            self.bus.emit(msg)
+
+    def handle_set_brightness(self, message):
+        device = self.search_for_device(message.data.get("device"))
+        if device:
+            try:
+                msg = message.response(data={"brightness": device.change_brightness(message.data.get("brightness"))})
+            except Exception as e:
+                LOG.error(e)
+                msg = message.response(data={"brightness": e})
+        self.bus.emit(msg)
+
+    def handle_decrease_brightness(self, message):
+        device = self.search_for_device(message.data.get("device"))
+        if device:
+            try:
+                amount = int(message.data.get("amount"))
+                msg = message.response(data={"brightness": device.change_brightness(device.brightness - amount)})
+            except Exception as e:
+                LOG.error(e)
+                msg = message.response(data={"brightness": e})
+        self.bus.emit(msg)
+
+    def handle_increase_brightness(self, message):
+        device = self.search_for_device(message.data.get("device"))
+        if device:
+            try:
+                amount = int(message.data.get("amount"))
+                msg = message.response(data={"brightness": device.change_brightness(device.brightness + amount)})
+            except Exception as e:
+                LOG.error(e)
+                msg = message.response(data={"brightness": e})
+        self.bus.emit(msg)
+
+    def handle_get_color(self, message):
+        device = self.search_for_device(message.data.get("device"))
+        if device:
+            msg = message.response(data={"color": device.color})
+        self.bus.emit(msg)
+
+    def handle_set_color(self, message):
+        device = self.search_for_device(message.data.get("device"))
+        if device:
+            try:
+                msg = message.response(data={"color": device.change_color(message.data.get("color"))})
+            except Exception as e:
+                LOG.error(e)
+                msg = message.response(data={"color": e})
+        self.bus.emit(msg)
+
+    def search_for_device(self, device):
+        for d_id, d in self devices.items():
+            if device == d_id or device == d.name:
+                return d
+        return None
+
     def disambiguate_new_device(self, device: IOTAbstractDevice):
         # check if device with same ip exists
         for dev_id, device2 in self.devices.items():
@@ -72,7 +141,6 @@ class CommonIOTDeviceManager:
                 continue
             scanner.start()
             self.scanners[plugin] = scanner
-
 
 if __name__ == "__main__":
     from ovos_utils.messagebus import FakeBus
